@@ -1,0 +1,22 @@
+{
+    "name": "discord-voice-bot",
+    "version": "1.0.0",
+    "license": "AGPL-3.0-or-later",
+    "author": {
+        "name": "Carlos Amores"
+    },
+    "dependencies": {
+        "@types/lodash": "^4.14.170",
+        "@types/node": "^15.12.2",
+        "discord.js": "^12.5.3",
+        "fs-read-exactly": "^1.0.0",
+        "lodash": "^4.17.21",
+        "mysql2": "^2.2.5",
+        "reflect-metadata": "^0.1.13",
+        "sequelize": "^6.6.2",
+        "sequelize-typescript": "^2.1.0"
+    },
+    "devDependencies": {
+        "sequelize-cli": "^6.2.0"
+    }
+}
