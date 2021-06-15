@@ -1,6 +1,6 @@
-FROM docker.io/library/node:latest
+FROM docker.io/library/ubuntu:latest
 
-RUN apt update && apt install -y node-typescript
+RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y curl npm node-typescript && npm install -g n && n latest
 
 WORKDIR /bot
 

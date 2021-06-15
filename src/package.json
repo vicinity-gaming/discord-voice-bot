@@ -9,7 +9,7 @@
         "@types/lodash": "^4.14.170",
         "@types/node": "^15.12.2",
         "discord.js": "^12.5.3",
-        "fs-read-exactly": "^1.0.0",
+        "fs-readdir-recursive": "^1.1.0",
         "lodash": "^4.17.21",
         "mysql2": "^2.2.5",
         "reflect-metadata": "^0.1.13",

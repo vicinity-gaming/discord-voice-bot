@@ -46,7 +46,16 @@ export async function handleEvent(client: Discord.Client, config: AppConfig, cmd
             let argWithoutDelimiters: string = _.replace(arg, /((?<!\\)(?:\\{2})*)["]/gm, '$1');
             return _.replace(argWithoutDelimiters, /\\"/gm, '"');
         });
-        cmdObj[commandName].run(client, message, ...cmdArgs).catch(console.error);
+
+        if (commandName === 'help')
+        {
+            // Define a special case for the help command as it needs to reference all other commands.
+            cmdObj['help'].run(client, message, cmdObj, ...cmdArgs).catch(console.error);
+        }
+        else
+        {
+            cmdObj[commandName].run(client, message, ...cmdArgs).catch(console.error);
+        }
     }
     else
     {
