@@ -21,11 +21,11 @@ export default interface CommandFile
      * of this function can define any number of named parameters which will be passed to it by the parser from left
      * to right as well as a single variable using spread syntax to receive all arguments.
      */
-    run: (client: Discord.Client, msg: Discord.Message, ...args: Array<string> | any) => Promise<void>;
+    run : (client : Discord.Client, msg : Discord.Message, ...args : Array<string> | any) => Promise<void>;
     /**
      * Returns relevant information about the command in a standardised format in the shape of a CommandHelpData object.
      */
-    help: () => CommandHelpData;
+    help : () => CommandHelpData;
 
-    [key: string]: any;
+    [key : string] : any;
 }

@@ -8,22 +8,21 @@ import CommandFile     from '../types/CommandFile';
  *
  * @param client
  * @param msg
- * @param cmd
  * @param args
  *
  * @author Carlos Amores
  */
-export async function run(client: Discord.Client, msg: Discord.Message, ...args: Array<string>): Promise<void>
+export async function run(client : Discord.Client, msg : Discord.Message, ...args : Array<string>) : Promise<void>
 {
-    let argStore: Array<string> = [];
-    _.each(args, function (v: string, k: number)
+    let argStore : Array<string> = [];
+    _.each(args, function (v : string, k : number)
     {
         argStore.push(`Arg #${k}: ${v}`);
     });
 
-    const reply: Discord.MessageEmbed = new Discord.MessageEmbed(
+    const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
-            description: _.join(argStore, '\n'),
+            description : _.join(argStore, '\n'),
         },
     );
     msg.channel.send(reply).catch(console.error);
@@ -34,11 +33,11 @@ export async function run(client: Discord.Client, msg: Discord.Message, ...args:
  *
  * @author Carlos Amores
  */
-export function help(): CommandHelpData
+export function help() : CommandHelpData
 {
     return {
-        commandName       : 'Test',
-        commandDescription: 'Takes an arbitrary amount of arguments, parses them and displays them in order to test the argument parser.',
-        commandUsage      : '.test ARG1 ARG2 ...',
+        commandName        : 'Test',
+        commandDescription : 'Takes an arbitrary amount of arguments, parses them and displays them in order to test the argument parser.',
+        commandUsage       : '.test ARG1 ARG2 ...'
     }
 }

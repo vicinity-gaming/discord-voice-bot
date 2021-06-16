@@ -9,30 +9,30 @@ import EventFile    from './types/EventFile';
 const frr    = require('fs-readdir-recursive');
 const client = new Discord.Client();
 
-let config: AppConfig = new AppConfig();
+let config : AppConfig = new AppConfig();
 _.extend(config, require('../config.json'));
 
-let commands: { [key: string]: CommandFile } = {};
-_.each(frr('./commands/'), function (file: string): void
+let commands : { [key : string] : CommandFile } = {};
+_.each(frr('./commands/'), function (file : string) : void
 {
     if (!file.endsWith('.js'))
     {
         return;
     }
 
-    let commandName: string = file.substr(0, file.length - 3).replace('/', config.prefix);
-    commands[commandName]   = require('./commands/' + file);
+    let commandName : string = file.substr(0, file.length - 3).replace('/', config.prefix);
+    commands[commandName]    = require('./commands/' + file);
 });
 
-_.each(fs.readdirSync('./events/'), function (file: string)
+_.each(fs.readdirSync('./events/'), function (file : string)
 {
     if (!file.endsWith('.js'))
     {
         return;
     }
 
-    let evtName: string    = file.split('.')[0];
-    let evtFile: EventFile = require('./events/' + file);
+    let evtName : string    = file.split('.')[0];
+    let evtFile : EventFile = require('./events/' + file);
     if (evtName === 'message')
     {
         client.on(evtName, evtFile.handleEvent.bind(null, client, config, commands));

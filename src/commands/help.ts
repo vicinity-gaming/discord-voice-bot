@@ -13,20 +13,20 @@ import CommandFile     from "../types/CommandFile";
  *
  * @author Carlos Amores
  */
-export async function run(client: Discord.Client, msg: Discord.Message, cmdObj: { [key: string]: CommandFile }, ...commands: Array<string>): Promise<void>
+export async function run(client : Discord.Client, msg : Discord.Message, cmdObj : { [key : string] : CommandFile }, ...commands : Array<string>) : Promise<void>
 {
-    const reply: Discord.MessageEmbed = new Discord.MessageEmbed(
+    const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
-            title   : 'Commands help',
-            hexColor: '#7c8bf5'
+            title    : 'Commands help',
+            hexColor : '#7c8bf5'
         }
     );
     console.dir(commands);
-    _.each(cmdObj, function (cmdFile: CommandFile, k: string)
+    _.each(cmdObj, function (cmdFile : CommandFile, k : string)
     {
         if (commands[0] === '' || commands.includes(k))
         {
-            let cmdHelpData: CommandHelpData = cmdFile.help();
+            let cmdHelpData : CommandHelpData = cmdFile.help();
             reply.addField(
                 cmdHelpData.commandName,
                 '**Description:** ' + cmdHelpData.commandDescription + '\n' + '**Usage:** `' + cmdHelpData.commandUsage + '`'
@@ -41,11 +41,11 @@ export async function run(client: Discord.Client, msg: Discord.Message, cmdObj: 
  *
  * @author Carlos Amores
  */
-export function help(): CommandHelpData
+export function help() : CommandHelpData
 {
     return {
-        commandName       : 'Help',
-        commandDescription: 'Displays information about all commands or specific commands.',
-        commandUsage      : '.help [COMMAND1 COMMAND2 ...]',
+        commandName        : 'Help',
+        commandDescription : 'Displays information about all commands or specific commands.',
+        commandUsage       : '.help [COMMAND1 COMMAND2 ...]'
     }
 }

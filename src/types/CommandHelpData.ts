@@ -7,7 +7,7 @@
  */
 export default interface CommandHelpData
 {
-    commandName: string;
-    commandDescription: string;
-    commandUsage: string;
+    commandName : string;
+    commandDescription : string;
+    commandUsage : string;
 }

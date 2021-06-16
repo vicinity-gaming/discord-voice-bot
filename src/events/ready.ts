@@ -13,10 +13,10 @@ export async function handleEvent(client : Discord.Client, config : AppConfig) :
 {
     await client.user?.setPresence(
         {
-            status  : 'online',
-            activity: {
-                name: 'Whack-a-Mole with voice channels',
-                type: 'PLAYING',
+            status   : 'online',
+            activity : {
+                name : 'Whack-a-Mole with voice channels',
+                type : 'PLAYING',
             },
         },
     );
