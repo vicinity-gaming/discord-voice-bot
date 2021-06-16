@@ -30,7 +30,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
             {
                 /*
                  * Check to send the message when the maximum amount of fields per embed is reached.
-                 * When this happens, the fields in the embed are reset and the fields per embed counter is reset as
+                 * When this happens, the fields in the embed are reset, and the fields per embed counter is reset as
                  * well.
                  */
                 msg.channel.send(reply).catch(console.error);
