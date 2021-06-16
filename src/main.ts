@@ -6,42 +6,73 @@ import AppConfig    from './types/AppConfig';
 import CommandFile  from './types/CommandFile';
 import EventFile    from './types/EventFile';
 
-const frr    = require('fs-readdir-recursive');
-const client = new Discord.Client();
-
-let config : AppConfig = new AppConfig();
-_.extend(config, require('../config.json'));
-
-let commands : { [key : string] : CommandFile } = {};
-_.each(frr('./commands/'), function (file : string) : void
+// Wrap the entrypoint in a function that is automatically called so that we may exit early in case of an error.
+function main() : void
 {
-    if (!file.endsWith('.js'))
+    const frr    = require('fs-readdir-recursive');
+    const client = new Discord.Client();
+
+    let config : AppConfig = new AppConfig();
+    _.extend(config, require('../config.json'));
+
+    try
     {
+        new Sequelize(
+            {
+                database : process.env.DISCORD_MYSQL_DB,
+                dialect  : 'mysql',
+                username : process.env.DISCORD_MYSQL_USER,
+                password : process.env.DISCORD_MYSQL_PASS,
+                port     : Number(process.env.DISCORD_MYSQL_PORT),
+                pool     : {
+                    max  : 5,
+                    min  : 0,
+                    idle : 10000
+                },
+                models   : [__dirname + '/models/*.ts'],
+                logging  : false
+            }
+        );
+    }
+    catch (e : any)
+    {
+        console.error(e);
         return;
     }
 
-    let commandName : string = file.substr(0, file.length - 3).replace('/', config.prefix);
-    commands[commandName]    = require('./commands/' + file);
-});
-
-_.each(fs.readdirSync('./events/'), function (file : string)
-{
-    if (!file.endsWith('.js'))
+    let commands : { [key : string] : CommandFile } = {};
+    _.each(frr('./commands/'), function (file : string) : void
     {
-        return;
-    }
+        if (!file.endsWith('.js'))
+        {
+            return;
+        }
 
-    let evtName : string    = file.split('.')[0];
-    let evtFile : EventFile = require('./events/' + file);
-    if (evtName === 'message')
-    {
-        client.on(evtName, evtFile.handleEvent.bind(null, client, config, commands));
-    }
-    else
-    {
-        client.on(evtName, evtFile.handleEvent.bind(null, client, config));
-    }
-    delete require.cache[require.resolve('./events/' + file)];
-});
+        let commandName : string = file.substr(0, file.length - 3).replace('/', config.prefix);
+        commands[commandName]    = require('./commands/' + file);
+    });
 
-client.login(process.env.DISCORD_CLIENT_TOKEN).catch(console.error);
+    _.each(fs.readdirSync('./events/'), function (file : string)
+    {
+        if (!file.endsWith('.js'))
+        {
+            return;
+        }
+
+        let evtName : string    = file.split('.')[0];
+        let evtFile : EventFile = require('./events/' + file);
+        if (evtName === 'message')
+        {
+            client.on(evtName, evtFile.handleEvent.bind(null, client, config, commands));
+        }
+        else
+        {
+            client.on(evtName, evtFile.handleEvent.bind(null, client, config));
+        }
+        delete require.cache[require.resolve('./events/' + file)];
+    });
+
+    client.login(process.env.DISCORD_CLIENT_TOKEN).catch(console.error);
+}
+
+main();
