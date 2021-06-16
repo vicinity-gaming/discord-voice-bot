@@ -1,7 +1,6 @@
 import * as Discord    from 'discord.js';
 import * as _          from 'lodash';
 import CommandHelpData from '../types/CommandHelpData';
-import CommandFile     from '../types/CommandFile';
 
 /**
  * Command to test the command argument parser.
