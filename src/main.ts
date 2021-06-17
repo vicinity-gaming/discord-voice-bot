@@ -15,30 +15,33 @@ function main() : void
     let config : AppConfig = new AppConfig();
     _.extend(config, require('../config.json'));
 
-    try
+    if (process.env.RUN_WITHOUT_MYSQL !== 'true')
     {
-        new Sequelize(
-            {
-                host     : process.env.DISCORD_MYSQL_HOST,
-                database : process.env.DISCORD_MYSQL_DB,
-                dialect  : 'mysql',
-                username : process.env.DISCORD_MYSQL_USER,
-                password : process.env.DISCORD_MYSQL_PASS,
-                port     : Number(process.env.DISCORD_MYSQL_PORT),
-                pool     : {
-                    max  : 5,
-                    min  : 0,
-                    idle : 10000
-                },
-                models   : [__dirname + '/models/*.ts'],
-                logging  : false
-            }
-        );
-    }
-    catch (e : any)
-    {
-        console.error(e);
-        return;
+        try
+        {
+            new Sequelize(
+                {
+                    host     : process.env.DISCORD_MYSQL_HOST,
+                    database : process.env.DISCORD_MYSQL_DB,
+                    dialect  : 'mysql',
+                    username : process.env.DISCORD_MYSQL_USER,
+                    password : process.env.DISCORD_MYSQL_PASS,
+                    port     : Number(process.env.DISCORD_MYSQL_PORT),
+                    pool     : {
+                        max  : 5,
+                        min  : 0,
+                        idle : 10000
+                    },
+                    models   : [__dirname + '/models/*.ts'],
+                    logging  : false
+                }
+            );
+        }
+        catch (e : any)
+        {
+            console.error(e);
+            return;
+        }
     }
 
     let commands : { [key : string] : CommandFile } = {};

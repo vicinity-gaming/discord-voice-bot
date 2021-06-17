@@ -17,8 +17,11 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
 {
     let reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
-            title    : 'Commands help',
-            hexColor : '#7c8bf5'
+            title     : 'Commands Help',
+            hexColor  : '#7c8bf5',
+            thumbnail : {
+                url : 'https://cdn.discordapp.com/avatars/' + msg.member.id + '/' + msg.member.user.avatar + '.png?size=1024'
+            }
         }
     );
     let i                            = 0;

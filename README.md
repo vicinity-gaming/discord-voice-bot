@@ -38,6 +38,10 @@ Other OPTIONAL environment variables:
 Determines whether the bot will log debug info to the console (as the debug event triggers). The debug mode can only be
 activated by setting this environment variable to `true`; anything else will not enable debug mode.
 
+`RUN_WITHOUT_MYSQL`  
+Allows the bot to start without trying to connect to a MySQL database. This option will only cause an effect when it is
+set exactly to `true`.
+
 ## Config file
 
 The configuration file contains all the relevant information to allow the bot to work properly and its schema is defined

@@ -60,4 +60,15 @@ export async function handleEvent(
     {
         userLeftChannel(oVState.member, oVState.channel, config);
     }
+    else if (oVState.channel !== null && nVState.channel !== null && oVState.channel.id !== nVState.channel.id)
+    {
+        if (_.keys(config.tracked_guilds).includes(oVState.guild.id) && !config.tracked_guilds[oVState.guild.id].untracked_voice_channels.includes(oVState.channel.id))
+        {
+            userLeftChannel(oVState.member, oVState.channel, config);
+        }
+        if (_.keys(config.tracked_guilds).includes(nVState.guild.id) && !config.tracked_guilds[oVState.guild.id].untracked_voice_channels.includes(nVState.guild.id))
+        {
+            userJoinedChannel(nVState.member, nVState.channel, config);
+        }
+    }
 }
