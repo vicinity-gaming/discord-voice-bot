@@ -15,7 +15,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
     let targetChannel : Discord.VoiceChannel | null = msg.guild.member(msg.mentions.users.first()).voice.channel;
     if (targetChannel === null)
     {
-        msg.member.send('The tagged member is not in a voice channel.').catch(console.error);
+        msg.channel.send('<@' + msg.member.id + '> The tagged member is not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -26,7 +26,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
     }
     else
     {
-        msg.member.send('You do not have permission to join the channel or the channel is full.').catch(console.error);
+        msg.channel.send('<@' + msg.member.id + '> You do not have permission to join the channel or the channel is full.').catch(console.error);
     }
 }
 
