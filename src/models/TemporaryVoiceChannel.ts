@@ -52,7 +52,7 @@ export class TemporaryVoiceChannel extends Model
     @AllowNull(false)
     @Column
     /**
-     * Whether the channel still exists on the server or it has already been automatically removed.
+     * Whether the channel still exists on the server, or it has already been automatically removed.
      */
     public alive : boolean;
 }

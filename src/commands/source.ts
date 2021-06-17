@@ -14,7 +14,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
     const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
             title       : 'Source Code',
-            hexColor    : '#7c8bf5',
+            color       : [124, 139, 245],
             thumbnail   : {
                 url : 'https://cdn.discordapp.com/avatars/' + client.user.id + '/' + client.user.avatar + '.png?size=1024'
             },

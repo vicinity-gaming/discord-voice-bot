@@ -21,6 +21,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, ...arg
 
     const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
+            color       : [124, 139, 245],
             description : _.join(argStore, '\n'),
         },
     );

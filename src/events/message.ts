@@ -5,7 +5,7 @@ import CommandFile        from '../types/CommandFile';
 import CommandPermissions from '../types/CommandPermissions';
 
 /**
- * Checks whether an user has permission to execute a given command.
+ * Checks whether a user has permission to execute a given command.
  *
  * @param member
  * @param command
@@ -82,7 +82,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
         }
     });
 
-    if (isCommand && ['', message.guild.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && hasCommandPermissions(message.guild.member(message.member), commandName, config))
+    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && hasCommandPermissions(message.guild.member(message.member), commandName, config))
     {
         let cmdArgs : Array<string> = message.content
             .substr(config.prefix.length + commandName.length)

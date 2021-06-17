@@ -22,7 +22,11 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
     let userPerms : Readonly<Discord.Permissions> = targetChannel.permissionsFor(msg.member);
     if (userPerms.has(Discord.Permissions.FLAGS.CONNECT) && (targetChannel.userLimit === 0 || targetChannel.members.size < targetChannel.userLimit))
     {
-        msg.member.voice.setChannel(targetChannel).catch(console.error);
+        msg.member.voice.setChannel(targetChannel)
+            .catch(function ()
+            {
+                msg.reply('You need to be in a voice channel before running this command.').catch(console.error);
+            });
     }
     else
     {
