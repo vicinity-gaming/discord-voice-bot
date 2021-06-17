@@ -16,7 +16,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
             title       : 'Commands Help',
             hexColor    : '#7c8bf5',
             thumbnail   : {
-                url : 'https://cdn.discordapp.com/avatars/' + msg.member.id + '/' + msg.member.user.avatar + '.png?size=1024'
+                url : 'https://cdn.discordapp.com/avatars/' + client.user.id + '/' + client.user.avatar + '.png?size=1024'
             },
             description : 'View the bot\'s source code on GitHub: https://github.com/vicinity-gaming/discord-voice-bot/tree/master'
         }
