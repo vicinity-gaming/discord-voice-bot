@@ -9,7 +9,7 @@ import AppConfig    from '../types/AppConfig';
  * @author Carlos Amores
  * {@link https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready}
  */
-export async function handleEvent(client : Discord.Client, config : AppConfig) : Promise<void>
+export async function handleEvent(client : Discord.Client) : Promise<void>
 {
     await client.user?.setPresence(
         {

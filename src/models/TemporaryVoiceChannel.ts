@@ -34,6 +34,12 @@ export class TemporaryVoiceChannel extends Model
     @AllowNull(false)
     @Column
     /**
+     * The ID of the guild where the channel was created.
+     */
+    public guild_id : Discord.Snowflake;
+    @AllowNull(false)
+    @Column
+    /**
      * The ID of the channel represented by the model.
      */
     public channel_id : Discord.Snowflake;

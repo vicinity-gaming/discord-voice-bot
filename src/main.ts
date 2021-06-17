@@ -19,6 +19,7 @@ function main() : void
     {
         new Sequelize(
             {
+                host     : process.env.DISCORD_MYSQL_HOST,
                 database : process.env.DISCORD_MYSQL_DB,
                 dialect  : 'mysql',
                 username : process.env.DISCORD_MYSQL_USER,

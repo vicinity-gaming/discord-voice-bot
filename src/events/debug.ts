@@ -12,7 +12,7 @@ import AppConfig    from '../types/AppConfig';
  */
 export async function handleEvent(client : Discord.Client, config : AppConfig, info : string) : Promise<void>
 {
-    if (config.debug_mode)
+    if (process.env.DEBUG_MODE === 'true')
     {
         console.info(info);
     }

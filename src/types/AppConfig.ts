@@ -1,4 +1,5 @@
-import * as Discord from 'discord.js';
+import * as Discord       from 'discord.js';
+import CommandPermissions from './CommandPermissions';
 
 /**
  * Class AppConfig
@@ -16,6 +17,16 @@ import * as Discord from 'discord.js';
 export default class AppConfig
 {
     public prefix : string;
-    public debug_mode : boolean;
-    public untracked_voice_channels : Array<Discord.Snowflake>;
+    public tracked_guilds : {
+        [key : string] : {
+            untracked_voice_channels : Array<Discord.Snowflake>,
+            create_temporary_channel : Discord.Snowflake,
+            temporary_channels_cats : Array<Discord.Snowflake>,
+            create_event_channel : Discord.Snowflake,
+            event_channels_cats : Array<Discord.Snowflake>
+            commands_channel : Discord.Snowflake,
+            command_permissions : CommandPermissions,
+            command_permissions_override : Array<Discord.Snowflake>
+        }
+    };
 }
