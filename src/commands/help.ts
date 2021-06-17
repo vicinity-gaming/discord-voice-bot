@@ -36,7 +36,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
                  * When this happens, the fields in the embed are reset, and the fields per embed counter is reset as
                  * well.
                  */
-                msg.channel.send(reply).catch(console.error);
+                msg.reply(reply).catch(console.error);
                 reply.fields = [];
                 i            = 0;
             }
@@ -48,7 +48,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
             ++i;
         }
     });
-    msg.channel.send(reply).catch(console.error);
+    msg.reply(reply).catch(console.error);
 }
 
 /**

@@ -24,7 +24,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, ...arg
             description : _.join(argStore, '\n'),
         },
     );
-    msg.channel.send(reply).catch(console.error);
+    msg.reply(reply).catch(console.error);
 }
 
 /**
