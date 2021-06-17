@@ -36,7 +36,7 @@ export function help() : CommandHelpData
 {
     return {
         commandName        : 'Test',
-        commandDescription : 'Takes an arbitrary amount of arguments, parses them and displays them in order to test the argument parser.',
+        commandDescription : 'Takes an arbitrary amount of arguments, parses them and displays them in order to test the argument parser',
         commandUsage       : '.test ARG1 ARG2 ...'
     }
 }
