@@ -21,6 +21,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
             description : 'View the bot\'s source code on GitHub: https://github.com/vicinity-gaming/discord-voice-bot/tree/master'
         }
     );
+    msg.channel.send(reply).catch(console.error);
 }
 
 /**

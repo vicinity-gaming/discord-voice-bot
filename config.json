@@ -1,4 +1,15 @@
 {
     "prefix": ".",
-    "tracked_guilds": {}
+    "tracked_guilds": {
+        "829561384823685140": {
+            "untracked_voice_channels": [],
+            "create_temporary_channel": "",
+            "temporary_channels_cats": [],
+            "create_event_channel": "",
+            "event_channels_cats": [],
+            "commands_channel": "",
+            "command_permissions": {},
+            "command_permissions_override": []
+        }
+    }
 }
