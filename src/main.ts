@@ -37,7 +37,7 @@ function main() : void
                 }
             );
         }
-        catch (e : any)
+        catch (e)
         {
             console.error(e);
             return;
