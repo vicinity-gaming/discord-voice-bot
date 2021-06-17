@@ -13,7 +13,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
 {
     const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
-            title       : 'Commands Help',
+            title       : 'Source Code',
             hexColor    : '#7c8bf5',
             thumbnail   : {
                 url : 'https://cdn.discordapp.com/avatars/' + client.user.id + '/' + client.user.avatar + '.png?size=1024'
