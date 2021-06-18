@@ -1,5 +1,4 @@
 import * as Discord            from 'discord.js';
-import * as _                  from 'lodash-contrib';
 import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
@@ -44,7 +43,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, limit 
                 return;
             }
 
-            if (limit === '' || _.isNumeric(limit))
+            if (limit === '' || Number.isNaN(Number(limit)))
             {
                 msg.reply('You must specify a limit.').catch(console.error);
                 return;
