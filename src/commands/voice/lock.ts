@@ -1,18 +1,16 @@
 import * as Discord            from 'discord.js';
 import CommandHelpData         from '../../types/CommandHelpData';
-import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
+import {TemporaryVoiceChannel} from "../../models/TemporaryVoiceChannel";
 
 /**
- * Renames the voice channel the member is in to what the member specifies given that the member is in a voice channel
- * that can be renamed and that they own the channel.
+ * Command to lock the channel the person is currently in assuming it's a temporary channel and they own it.
  *
  * @param client
  * @param msg
- * @param channelName
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message, channelName : string) : Promise<void>
+export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
 {
     let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
     if (vc === null)
@@ -43,12 +41,21 @@ export async function run(client : Discord.Client, msg : Discord.Message, channe
                 return;
             }
 
-            tvc.channel_name = channelName;
-            tvc.save().catch(console.error);
-            vc.setName(channelName)
+            vc.overwritePermissions(
+                [
+                    {
+                        id   : msg.guild.roles.everyone.id,
+                        deny : 'CONNECT'
+                    },
+                    {
+                        id    : msg.member.id,
+                        allow : 'CONNECT'
+                    }
+                ]
+            )
                 .then(function ()
                 {
-                    msg.reply('Name changed successfully.').catch(console.error);
+                    msg.reply('Voice channel locked! :lock:').catch(console.error);
                 })
                 .catch(console.error);
         });
@@ -62,8 +69,8 @@ export async function run(client : Discord.Client, msg : Discord.Message, channe
 export function help() : CommandHelpData
 {
     return {
-        commandName        : 'Voice Name',
-        commandDescription : 'Rename your current voice channel if you are the owner',
-        commandUsage       : '.voice.name "NEW NAME"'
-    }
+        commandName        : 'Voice Lock',
+        commandDescription : 'Locks the channel and grants the channel owner join permissions',
+        commandUsage       : '.voice.lock'
+    };
 }

@@ -60,12 +60,8 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
                                 permissionOverwrites : [
                                     {
                                         id    : user.guild.roles.everyone.id,
-                                        allow : [
-                                            'VIEW_CHANNEL'
-                                        ],
-                                        deny  : [
-                                            'MANAGE_CHANNELS'
-                                        ]
+                                        allow : 'VIEW_CHANNEL',
+                                        deny  : 'MANAGE_CHANNELS'
                                     }
                                 ]
                             }

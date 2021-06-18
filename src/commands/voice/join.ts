@@ -12,7 +12,14 @@ import CommandHelpData from '../../types/CommandHelpData';
  */
 export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
 {
-    let targetChannel : Discord.VoiceChannel | null = msg.guild.member(msg.mentions.users.first()).voice.channel;
+    let mentionedMember : Discord.User | undefined = msg.mentions.users.first();
+    if (mentionedMember === undefined)
+    {
+        msg.reply('You did not tag a member.').catch(console.error);
+        return;
+    }
+
+    let targetChannel : Discord.VoiceChannel | null = msg.guild.member(mentionedMember).voice.channel;
     if (targetChannel === null)
     {
         msg.reply('The tagged member is not in a voice channel.').catch(console.error);
