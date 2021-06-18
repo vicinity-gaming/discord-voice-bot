@@ -49,15 +49,24 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 return;
             }
 
+            let kickedAnyone : boolean = false;
             msg.mentions.members.each(function (m : Discord.GuildMember)
             {
                 if (m.voice.channel?.id === vc.id)
                 {
                     m.voice.kick().catch(console.error);
+                    kickedAnyone = true;
                 }
             });
 
-            msg.reply('The mentioned member(s) have been kicked from the channel.').catch(console.error);
+            if (kickedAnyone)
+            {
+                msg.reply('The mentioned member(s) have been kicked from the channel.').catch(console.error);
+            }
+            else
+            {
+                msg.reply('The mentioned member(s) could not be kicked.').catch(console.error);
+            }
         });
 }
 
