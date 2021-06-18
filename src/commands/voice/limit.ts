@@ -1,16 +1,19 @@
 import * as Discord            from 'discord.js';
+import * as _                  from 'lodash-contrib';
 import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command to lock the channel the person is currently in assuming it's a temporary channel and they own it.
+ * Limit the amount of people who can connect to the voice channel of the member running the command.
  *
  * @param client
  * @param msg
+ * @param limit
  *
  * @author Carlos Amores
+ * @author Jacob Marsengill
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run(client : Discord.Client, msg : Discord.Message, limit : string) : Promise<void>
 {
     let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
     if (vc === null)
@@ -41,15 +44,27 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 return;
             }
 
-            vc.updateOverwrite(
-                msg.member.guild.roles.everyone,
+            if (limit === '' || _.isNumeric(limit))
+            {
+                msg.reply('You must specify a limit.').catch(console.error);
+                return;
+            }
+
+            let iLimit : number = Number(limit);
+            if (iLimit > 99 || iLimit < 0)
+            {
+                msg.reply('The limit must be a number between zero and ninety-nine.').catch(console.error);
+                return;
+            }
+
+            vc.edit(
                 {
-                    CONNECT : null
+                    userLimit : iLimit
                 }
             )
                 .then(function ()
                 {
-                    msg.reply('Voice channel unlocked! :unlock:').catch(console.error);
+                    msg.reply('Channel limit changed.').catch(console.error);
                 })
                 .catch(console.error);
         });
@@ -59,12 +74,13 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
  * Return relevant information about the current command.
  *
  * @author Carlos Amores
+ * @author Jacob Marsengill
  */
 export function help() : CommandHelpData
 {
     return {
-        commandName        : 'Voice Unlock',
-        commandDescription : 'Unlocks the channel and allows everyone to join',
-        commandUsage       : '.voice.unlock'
+        commandName        : 'Voice Limit',
+        commandDescription : 'Set a limit on the amount of users that can connect to your channel',
+        commandUsage       : '.voice.limit 0-99'
     };
 }

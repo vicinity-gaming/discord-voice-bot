@@ -1,9 +1,9 @@
 import * as Discord            from 'discord.js';
 import CommandHelpData         from '../../types/CommandHelpData';
-import {TemporaryVoiceChannel} from "../../models/TemporaryVoiceChannel";
+import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command to lock the channel the person is currently in assuming it's a temporary channel and they own it.
+ * Command to lock the channel the person is currently in assuming it's a temporary channel, and they own it.
  *
  * @param client
  * @param msg
