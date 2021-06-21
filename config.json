@@ -15,7 +15,8 @@
             "command_permissions": {},
             "command_permissions_override": [
                 "829561384843870231"
-            ]
+            ],
+            "xp_rate": {}
         }
     }
 }

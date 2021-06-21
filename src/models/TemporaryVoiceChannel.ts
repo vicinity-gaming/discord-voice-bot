@@ -20,7 +20,7 @@ export class TemporaryVoiceChannel extends Model
 {
     @AutoIncrement
     @PrimaryKey
-    @Column(DataType.BIGINT)
+    @Column(DataType.BIGINT.UNSIGNED)
     /**
      * Row UID.
      */
