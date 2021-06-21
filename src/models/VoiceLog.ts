@@ -71,7 +71,7 @@ export namespace VoiceLog
      */
     export enum ACTIONS
     {
-        JOIN  = 1,
-        LEAVE = 2
+        JOIN  = 1 << 0,
+        LEAVE = 1 << 1
     }
 }
