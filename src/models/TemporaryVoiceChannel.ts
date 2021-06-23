@@ -5,7 +5,7 @@ import * as Discord                                                           fr
     {
         tableName  : 'temporary_voice_channels',
         charset    : 'utf8mb4',
-        collate    : 'utf8mb4_general_ci',
+        collate    : 'utf8mb4_unicode_ci',
         timestamps : false
     }
 )
