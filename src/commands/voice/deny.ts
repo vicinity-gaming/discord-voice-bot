@@ -78,8 +78,8 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
 export function help() : CommandHelpData
 {
     return {
-        commandName        : 'Voice Allow',
-        commandDescription : 'Allows one or more members to join your channel',
-        commandUsage       : '.voice.allow @MEMBER1 [@MEMBER2 @MEMBER3]'
+        commandName        : 'Voice Deny',
+        commandDescription : 'Denies one or more members entry to your channel',
+        commandUsage       : '.voice.deny @MEMBER1 [@MEMBER2 @MEMBER3]'
     }
 }

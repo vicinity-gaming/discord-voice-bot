@@ -3,12 +3,13 @@ import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command to lock the channel the person is currently in assuming it's a temporary channel and they own it.
+ * Limit the amount of people who can connect to the voice channel of the member running the command.
  *
  * @param client
  * @param msg
  *
  * @author Carlos Amores
+ * @author Jacob Marsengill
  */
 export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
 {
@@ -41,17 +42,31 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 return;
             }
 
-            vc.updateOverwrite(
-                msg.member.guild.roles.everyone,
+            // Check that there are mentions in the message.
+            if (msg.mentions.members.size === 0)
+            {
+                msg.reply('You did not mention anyone to kick.').catch(console.error);
+                return;
+            }
+
+            let kickedAnyone : boolean = false;
+            msg.mentions.members.each(function (m : Discord.GuildMember)
+            {
+                if (m.voice.channel?.id === vc.id)
                 {
-                    CONNECT : null
+                    m.voice.kick().catch(console.error);
+                    kickedAnyone = true;
                 }
-            )
-                .then(function ()
-                {
-                    msg.reply('Voice channel unlocked! :unlock:').catch(console.error);
-                })
-                .catch(console.error);
+            });
+
+            if (kickedAnyone)
+            {
+                msg.reply('The mentioned member(s) have been kicked from the channel.').catch(console.error);
+            }
+            else
+            {
+                msg.reply('The mentioned member(s) could not be kicked.').catch(console.error);
+            }
         });
 }
 
@@ -59,12 +74,13 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
  * Return relevant information about the current command.
  *
  * @author Carlos Amores
+ * @author Jacob Marsengill
  */
 export function help() : CommandHelpData
 {
     return {
-        commandName        : 'Voice Unlock',
-        commandDescription : 'Unlocks the channel and allows everyone to join',
-        commandUsage       : '.voice.unlock'
-    };
+        commandName        : 'Voice Kick',
+        commandDescription : 'Kicks one or more members from your channel',
+        commandUsage       : '.voice.kick @MEMBER1 [@MEMBER2 @MEMBER3]'
+    }
 }
