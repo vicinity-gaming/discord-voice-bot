@@ -121,7 +121,7 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
 function userLeftChannel(user : Discord.GuildMember, channel : Discord.VoiceChannel, config : AppConfig) : void
 {
     // Check that the user left a channel in a category that we care about.
-    if ((config.tracked_guilds[user.guild.id].temporary_channels_cats.includes(channel.parent.id) || config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id)) && channel.members.size === 0 && (channel.id !== config.tracked_guilds[user.guild.id].create_temporary_channel || channel.id !== config.tracked_guilds[user.guild.id].create_event_channel))
+    if ((config.tracked_guilds[user.guild.id].temporary_channels_cats.includes(channel.parent.id) || config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id)) && channel.members.size === 0 && channel.id !== config.tracked_guilds[user.guild.id].create_temporary_channel && channel.id !== config.tracked_guilds[user.guild.id].create_event_channel)
     {
         TemporaryVoiceChannel.findOne(
             {
