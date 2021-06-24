@@ -3,7 +3,8 @@ import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command to permit the owner of a temporary channel to
+ * Command which transfers ownership of the channel to the invoker if the owner is no longer in the
+ * voice channel.
  *
  * @param client
  * @param msg

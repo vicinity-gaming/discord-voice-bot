@@ -48,10 +48,10 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 return;
             }
 
-            let permsObj : Array<Discord.OverwriteResolvable> = [];
+            let perms : Array<Discord.OverwriteResolvable> = Array.from(vc.permissionOverwrites.values());
             msg.mentions.members.each(function (m : Discord.GuildMember)
             {
-                permsObj.push(
+                perms.push(
                     {
                         id   : m.id,
                         deny : [
@@ -61,7 +61,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 );
             });
 
-            vc.overwritePermissions(permsObj)
+            vc.overwritePermissions(perms)
                 .then(function ()
                 {
                     msg.reply('The mentioned member(s) can no longer connect to your channel.').catch(console.error);

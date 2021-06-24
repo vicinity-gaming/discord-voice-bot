@@ -48,10 +48,11 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 return;
             }
 
-            let permsObj : Array<Discord.OverwriteResolvable> = [];
+            // Stack the new permissions on top of the old ones.
+            let perms : Array<Discord.OverwriteResolvable> = Array.from(vc.permissionOverwrites.values());
             msg.mentions.members.each(function (m : Discord.GuildMember)
             {
-                permsObj.push(
+                perms.push(
                     {
                         id    : m.id,
                         allow : [
@@ -60,8 +61,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                     }
                 );
             });
-
-            vc.overwritePermissions(permsObj)
+            vc.overwritePermissions(perms)
                 .then(function ()
                 {
                     msg.reply('The mentioned member(s) can now connect to your channel.').catch(console.error);
