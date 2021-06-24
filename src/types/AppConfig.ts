@@ -26,7 +26,11 @@ export default class AppConfig
             event_channels_cats : Array<Discord.Snowflake>
             commands_channel : Discord.Snowflake,
             command_permissions : CommandPermissions,
-            command_permissions_override : Array<Discord.Snowflake>
+            command_permissions_override : Array<Discord.Snowflake>,
+            xp_rates : {
+                event : number;
+                standard : number
+            }
         }
     };
 }
