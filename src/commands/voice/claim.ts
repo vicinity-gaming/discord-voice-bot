@@ -1,9 +1,10 @@
 import * as Discord            from 'discord.js';
+import * as _                  from 'lodash';
 import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command which lets a temporary channel owner allow members into their channel if it is locked.
+ * Command to permit the owner of a temporary channel to
  *
  * @param client
  * @param msg
@@ -35,36 +36,24 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 msg.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (tvc.owner_id !== msg.member.id)
+            else if (tvc.owner_id === msg.member.id)
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                msg.reply('You already own the channel. What are you doing??').catch(console.error);
+                return;
+            }
+            else if (_.keys(vc.members).includes(tvc.owner_id))
+            {
+                msg.reply('You cannot claim a channel while the owner is still in the channel.').catch(console.error);
                 return;
             }
 
-            // Check that there are mentions in the message.
-            if (msg.mentions.members.size === 0)
-            {
-                msg.reply('You did not tag anyone to permit.').catch(console.error);
-                return;
-            }
 
-            let permsObj : Array<Discord.OverwriteResolvable> = [];
-            msg.mentions.members.each(function (m : Discord.GuildMember)
-            {
-                permsObj.push(
-                    {
-                        id    : m.id,
-                        allow : [
-                            'CONNECT'
-                        ]
-                    }
-                );
-            });
-
-            vc.overwritePermissions(permsObj)
+            // Checks passed, give channel ownership to the invoker.
+            tvc.owner_id = msg.member.id;
+            tvc.save()
                 .then(function ()
                 {
-                    msg.reply('The mentioned member(s) can now connect to your channel.').catch(console.error);
+                    msg.reply('You own the channel now. Use your newfound power wisely m\'lord.').catch(console.error);
                 })
                 .catch(console.error);
         });
@@ -78,8 +67,8 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
 export function help() : CommandHelpData
 {
     return {
-        commandName        : 'Voice Allow',
-        commandDescription : 'Allows one or more members to join your channel',
-        commandUsage       : '.voice.allow @MEMBER1 [@MEMBER2 @MEMBER3 ...]'
+        commandName        : 'Voice Claim',
+        commandDescription : 'Gives ownership of the channel to the member invoking the command if the owner is no longer in the channel',
+        commandUsage       : '.voice.claim'
     }
 }

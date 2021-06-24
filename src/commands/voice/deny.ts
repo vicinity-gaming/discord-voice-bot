@@ -80,6 +80,6 @@ export function help() : CommandHelpData
     return {
         commandName        : 'Voice Deny',
         commandDescription : 'Denies one or more members entry to your channel',
-        commandUsage       : '.voice.deny @MEMBER1 [@MEMBER2 @MEMBER3]'
+        commandUsage       : '.voice.deny @MEMBER1 [@MEMBER2 @MEMBER3 ...]'
     }
 }

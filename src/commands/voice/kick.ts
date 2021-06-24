@@ -81,6 +81,6 @@ export function help() : CommandHelpData
     return {
         commandName        : 'Voice Kick',
         commandDescription : 'Kicks one or more members from your channel',
-        commandUsage       : '.voice.kick @MEMBER1 [@MEMBER2 @MEMBER3]'
+        commandUsage       : '.voice.kick @MEMBER1 [@MEMBER2 @MEMBER3 ...]'
     }
 }
