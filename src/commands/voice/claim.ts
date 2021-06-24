@@ -1,5 +1,4 @@
 import * as Discord            from 'discord.js';
-import * as _                  from 'lodash';
 import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
@@ -41,7 +40,7 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
                 msg.reply('You already own the channel. What are you doing??').catch(console.error);
                 return;
             }
-            else if (_.keys(vc.members).includes(tvc.owner_id))
+            else if (Array.from(vc.members.keys()).includes(tvc.owner_id))
             {
                 msg.reply('You cannot claim a channel while the owner is still in the channel.').catch(console.error);
                 return;
