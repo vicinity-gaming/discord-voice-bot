@@ -2,10 +2,10 @@ import * as Discord            from 'discord.js';
 import * as _                  from 'lodash';
 import AppConfig               from '../types/AppConfig';
 import {TemporaryVoiceChannel} from '../models/TemporaryVoiceChannel';
+import {VoiceLog}              from '../models/VoiceLog';
 
 /**
  * Handles logic for when a user joins a tracked channel.
- * TODO: Handle voice sessions to award experience.
  * TODO: Event channels.
  *
  * @param user
@@ -16,7 +16,7 @@ import {TemporaryVoiceChannel} from '../models/TemporaryVoiceChannel';
  */
 function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceChannel, config : AppConfig) : void
 {
-    // Check whether the joined channel was one to create temporary channels of some sort.
+    // Special case to check whether the joined channel was one to create temporary channels.
     if (channel.id === config.tracked_guilds[user.guild.id].create_temporary_channel)
     {
         // Check that the user does not already own other channels.
@@ -88,16 +88,28 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
                 }
             });
     }
-
-    if (config.tracked_guilds[user.guild.id].untracked_voice_channels.includes(channel.id))
+    else if (config.tracked_guilds[user.guild.id].untracked_voice_channels.includes(channel.id))
     {
         return;
     }
+
+    // At this point the member has certainly joined a tracked channel so the time spent in voice should be recorded.
+    const joinDate : Date = new Date();
+    const vcl : VoiceLog  = new VoiceLog(
+        {
+            discord_id       : user.id,
+            guild_id         : user.guild.id,
+            channel_id       : channel.id,
+            vc_action        : VoiceLog.ACTIONS.JOIN,
+            xp_rate          : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? config.tracked_guilds[user.guild.id].xp_rates.event : config.tracked_guilds[user.guild.id].xp_rates.standard,
+            action_timestamp : joinDate
+        }
+    );
+    vcl.save().catch(console.error);
 }
 
 /**
  * Handles logic for when a user leaves a tracked channel.
- * TODO: Handle voice sessions to award experience
  * TODO: Event channels.
  *
  * @param user
@@ -109,7 +121,7 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
 function userLeftChannel(user : Discord.GuildMember, channel : Discord.VoiceChannel, config : AppConfig) : void
 {
     // Check that the user left a channel in a category that we care about.
-    if (config.tracked_guilds[user.guild.id].temporary_channels_cats.includes(channel.parent.id) && channel.members.size === 0 && channel.id !== config.tracked_guilds[user.guild.id].create_temporary_channel)
+    if ((config.tracked_guilds[user.guild.id].temporary_channels_cats.includes(channel.parent.id) || config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id)) && channel.members.size === 0 && (channel.id !== config.tracked_guilds[user.guild.id].create_temporary_channel || channel.id !== config.tracked_guilds[user.guild.id].create_event_channel))
     {
         TemporaryVoiceChannel.findOne(
             {
@@ -134,11 +146,23 @@ function userLeftChannel(user : Discord.GuildMember, channel : Discord.VoiceChan
                 channel.delete().catch(console.error);
             });
     }
-
-    if (config.tracked_guilds[user.guild.id].untracked_voice_channels.includes(channel.id))
+    else if (config.tracked_guilds[user.guild.id].untracked_voice_channels.includes(channel.id))
     {
         return;
     }
+
+    const leaveDate : Date = new Date();
+    const vcl : VoiceLog   = new VoiceLog(
+        {
+            discord_id       : user.id,
+            guild_id         : user.guild.id,
+            channel_id       : channel.id,
+            vc_action        : VoiceLog.ACTIONS.LEAVE,
+            xp_rate          : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? config.tracked_guilds[user.guild.id].xp_rates.event : config.tracked_guilds[user.guild.id].xp_rates.standard,
+            action_timestamp : leaveDate
+        }
+    );
+    vcl.save().catch(console.error);
 }
 
 /**
