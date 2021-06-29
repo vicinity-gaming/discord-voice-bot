@@ -37,7 +37,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, limit 
                 msg.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (tvc.owner_id !== msg.member.id)
+            else if (!tvc.memberIsOwner(msg.member))
             {
                 msg.reply('You do not own the voice channel.').catch(console.error);
                 return;

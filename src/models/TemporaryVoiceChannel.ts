@@ -55,4 +55,14 @@ export class TemporaryVoiceChannel extends Model
      * Whether the channel still exists on the server, or it has already been automatically removed.
      */
     public alive : boolean;
+
+    /**
+     * Checks whether the provided GuildMember is the current owner of the channel.
+     *
+     * @author Carlos Amores
+     */
+    public memberIsOwner(member : Discord.GuildMember) : boolean
+    {
+        return member.id === this.owner_id;
+    }
 }
