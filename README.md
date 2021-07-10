@@ -67,11 +67,7 @@ in the [AppConfig interface](/src/types/AppConfig.ts). Here is a brief example o
           "join": []
         }
       },
-      "command_permissions_override": [],
-      "xp_rates": {
-        "event": 0.0021,
-        "standard": 0.0012
-      }
+      "command_permissions_override": []
     }
   }
 }
@@ -104,6 +100,3 @@ This object contains relevant information about each tracked guild.
   that everyone may use the command.
 - `command_permissions_override` An array of role IDs which override all command permissions. Members with at least one
   of the roles in the array may use all the commands regardless of specified command permissions.
-- `xp_rates` An object which defines two properties; `standard` and `event` specifying the amount of XP per second to be
-  issued. The rate will be stored in the database along with the start and end timestamps of a member being in a voice
-  channel.
