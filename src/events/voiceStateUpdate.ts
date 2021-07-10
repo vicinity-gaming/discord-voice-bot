@@ -87,6 +87,7 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
                     }
                 }
             });
+        return;
     }
     else if (config.tracked_guilds[user.guild.id].untracked_voice_channels.includes(channel.id))
     {
@@ -101,7 +102,7 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
             guild_id         : user.guild.id,
             channel_id       : channel.id,
             vc_action        : VoiceLog.ACTIONS.JOIN,
-            xp_rate          : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? config.tracked_guilds[user.guild.id].xp_rates.event : config.tracked_guilds[user.guild.id].xp_rates.standard,
+            log_type         : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? VoiceLog.TYPES.EVENT : VoiceLog.TYPES.STANDARD,
             action_timestamp : joinDate
         }
     );
@@ -158,7 +159,7 @@ function userLeftChannel(user : Discord.GuildMember, channel : Discord.VoiceChan
             guild_id         : user.guild.id,
             channel_id       : channel.id,
             vc_action        : VoiceLog.ACTIONS.LEAVE,
-            xp_rate          : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? config.tracked_guilds[user.guild.id].xp_rates.event : config.tracked_guilds[user.guild.id].xp_rates.standard,
+            log_type         : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? VoiceLog.TYPES.EVENT : VoiceLog.TYPES.STANDARD,
             action_timestamp : leaveDate
         }
     );

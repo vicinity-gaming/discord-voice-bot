@@ -55,7 +55,7 @@ export class VoiceLog extends Model
     /**
      * The amount of XP to issue per second.
      */
-    public xp_rate : number;
+    public log_type : VoiceLog.TYPES;
     @AllowNull(false)
     @Column
     /**
@@ -73,5 +73,14 @@ export namespace VoiceLog
     {
         JOIN  = 1 << 0,
         LEAVE = 1 << 1
+    }
+
+    /**
+     * Possible assignable values to VoiceLog::log_type
+     */
+    export enum TYPES
+    {
+        STANDARD = 1 << 0,
+        EVENT    = 1 << 1,
     }
 }

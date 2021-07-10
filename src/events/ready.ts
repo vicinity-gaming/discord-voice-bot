@@ -1,10 +1,8 @@
 import * as Discord from 'discord.js';
-import AppConfig    from '../types/AppConfig';
 
 /**
  * Discord ready event handler.
  * @param client
- * @param config
  *
  * @author Carlos Amores
  * {@link https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready}
