@@ -82,40 +82,44 @@ function main() : void
         delete require.cache[require.resolve('./events/' + file)];
     });
 
-    _.each(readdirRecursive('./endpoints/'), function (file : string) : void
-    {
-        let splitFile : Array<string> = file.split('/');
-        let httpMethod : string       = splitFile.shift();
-        if (!['get', 'post', 'patch', 'put', 'delete'].includes(httpMethod) || !file.endsWith('.js'))
+    client.login(process.env.DISCORD_CLIENT_TOKEN)
+        .then(function ()
         {
-            return;
-        }
-
-        let endpointPath : string       = '/' + splitFile.join('/');
-        endpointPath                    = endpointPath.substr(0, endpointPath.length - 3);
-        let endpointFile : EndpointFile = require('./endpoints/' + file);
-
-        api[httpMethod](
-            endpointPath,
-            header('dvb_key').equals(apiKey),
-            function (rq : Request, rs : Response, n : NextFunction)
+            _.each(readdirRecursive('./endpoints/'), function (file : string) : void
             {
-                try
+                let splitFile : Array<string> = file.split('/');
+                let httpMethod : string       = splitFile.shift();
+                if (!['get', 'post', 'patch', 'put', 'delete'].includes(httpMethod) || !file.endsWith('.js'))
                 {
-                    validationResult(rq).throw();
-                    n();
+                    return;
                 }
-                catch (e)
-                {
-                    rs.sendStatus(403);
-                }
-            },
-            endpointFile.run.bind(null, client, config, apiKey)
-        );
-    });
 
-    api.listen(8080);
-    client.login(process.env.DISCORD_CLIENT_TOKEN).catch(console.error);
+                let endpointPath : string       = '/' + splitFile.join('/');
+                endpointPath                    = endpointPath.substr(0, endpointPath.length - 3);
+                let endpointFile : EndpointFile = require('./endpoints/' + file);
+
+                api[httpMethod](
+                    endpointPath,
+                    header('dvb_key').equals(apiKey),
+                    function (rq : Request, rs : Response, n : NextFunction)
+                    {
+                        try
+                        {
+                            validationResult(rq).throw();
+                            n();
+                        }
+                        catch (e)
+                        {
+                            rs.sendStatus(403);
+                        }
+                    },
+                    endpointFile.run.bind(null, client, config, apiKey)
+                );
+            });
+
+            api.listen(8080);
+        })
+        .catch(console.error);
 }
 
 main();
