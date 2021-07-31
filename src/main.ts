@@ -50,6 +50,10 @@ function main() : void
         }
     }
 
+    /*
+     * Build a commands object which allows the message event handler to map command messages to the right command
+     * handler in the code.
+     */
     let commands : { [key : string] : CommandFile } = {};
     _.each(readdirRecursive('./commands/'), function (file : string) : void
     {
@@ -62,6 +66,7 @@ function main() : void
         commands[commandName]    = require('./commands/' + file);
     });
 
+    // Register the event handlers from their files with the bot client.
     _.each(fs.readdirSync('./events/'), function (file : string) : void
     {
         if (!file.endsWith('.js'))
@@ -85,6 +90,7 @@ function main() : void
     client.login(process.env.DISCORD_CLIENT_TOKEN)
         .then(function ()
         {
+            // Register the endpoints with Express after the bot client has managed to log in.
             _.each(readdirRecursive('./endpoints/'), function (file : string) : void
             {
                 let splitFile : Array<string> = file.split('/');

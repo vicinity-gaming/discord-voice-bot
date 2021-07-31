@@ -25,7 +25,7 @@ export class VoiceLog extends Model
     /**
      * Row UID.
      */
-    public id : bigint;
+    declare public id : bigint;
     @AllowNull(false)
     @Column
     /**
