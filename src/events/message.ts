@@ -1,56 +1,8 @@
-import * as Discord       from 'discord.js';
-import * as _             from 'lodash';
-import AppConfig          from '../types/AppConfig';
-import CommandFile        from '../types/CommandFile';
-import CommandPermissions from '../types/CommandPermissions';
-
-/**
- * Checks whether a user has permission to execute a given command.
- *
- * @param member
- * @param command
- * @param config
- *
- * @author Carlos Amores
- */
-function hasCommandPermissions(member : Discord.GuildMember, command : string, config : AppConfig) : boolean
-{
-    if (_.some(Array.from(member.roles.cache.keys()), role => config.tracked_guilds[member.guild.id].command_permissions_override.includes(role)))
-    {
-        return true;
-    }
-
-    // Unwrap the command groups if any.
-    let unwrappedCmd : Array<string>                          = command.split(config.prefix);
-    let level : Array<Discord.Snowflake> | CommandPermissions = config.tracked_guilds[member.guild.id].command_permissions;
-    let hasPermissions : boolean                              = false;
-    _.each(unwrappedCmd, function (cmd : string)
-    {
-        if (cmd in level)
-        {
-            if (_.isArray(level[cmd]))
-            {
-                /*
-                 * When we reach the point at which there is an array of roles which can use the command, check if the
-                 * member is in any of those roles much like when checking for override.
-                 */
-                hasPermissions = _.some(Array.from(member.roles.cache.keys()), role => level[cmd].includes(role));
-                return false;
-            }
-            else
-            {
-                level = level[cmd];
-            }
-        }
-        else
-        {
-            hasPermissions = true;
-            return false;
-        }
-    });
-
-    return hasPermissions;
-}
+import * as Discord              from 'discord.js';
+import * as _                    from 'lodash';
+import AppConfig                 from '../types/AppConfig';
+import CommandFile               from '../types/CommandFile';
+import {checkCommandPermissions} from '../utils/utils';
 
 /**
  * Discord message event handler.
@@ -82,7 +34,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
         }
     });
 
-    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && hasCommandPermissions(message.guild.member(message.member), commandName, config))
+    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && checkCommandPermissions(message.guild.member(message.member), commandName, config))
     {
         let cmdArgs : Array<string> = message.content
             .substr(config.prefix.length + commandName.length)
@@ -99,7 +51,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
         if (commandName === 'help')
         {
             // Define a special case for the help command as it needs to reference all other commands.
-            cmdObj['help'].run(client, message, cmdObj, ...cmdArgs).catch(console.error);
+            cmdObj['help'].run(client, message, cmdObj, config, ...cmdArgs).catch(console.error);
         }
         else
         {
