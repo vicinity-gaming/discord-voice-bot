@@ -3,7 +3,8 @@ import CommandHelpData         from '../../types/CommandHelpData';
 import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 
 /**
- * Command to permit the owner of a temporary channel to
+ * Command which allows the owner of a temporary voice channel to deny connection to their channel to a certain member
+ * or members.
  *
  * @param client
  * @param msg

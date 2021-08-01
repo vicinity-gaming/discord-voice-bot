@@ -1,7 +1,9 @@
-import * as Discord    from 'discord.js';
-import * as _          from 'lodash';
-import CommandHelpData from '../types/CommandHelpData';
-import CommandFile     from "../types/CommandFile";
+import * as Discord              from 'discord.js';
+import * as _                    from 'lodash';
+import CommandHelpData           from '../types/CommandHelpData';
+import CommandFile               from "../types/CommandFile";
+import {checkCommandPermissions} from '../utils/utils';
+import AppConfig                 from '../types/AppConfig';
 
 /**
  * Command to test the command argument parser.
@@ -9,11 +11,12 @@ import CommandFile     from "../types/CommandFile";
  * @param client
  * @param msg
  * @param cmdObj
+ * @param config
  * @param commands
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message, cmdObj : { [key : string] : CommandFile }, ...commands : Array<string>) : Promise<void>
+export async function run(client : Discord.Client, msg : Discord.Message, cmdObj : { [key : string] : CommandFile }, config : AppConfig, ...commands : Array<string>) : Promise<void>
 {
     let reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
@@ -27,7 +30,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
     let i                            = 0;
     _.each(cmdObj, function (cmdFile : CommandFile, k : string)
     {
-        if (commands[0] === '' || commands.includes(k))
+        if ((commands[0] === '' || commands.includes(k)) && checkCommandPermissions(msg.member, k, config))
         {
             if (i === 24)
             {
