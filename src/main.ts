@@ -1,16 +1,22 @@
-import * as Discord from 'discord.js';
-import * as fs      from 'fs';
-import * as _       from 'lodash';
-import {Sequelize}  from 'sequelize-typescript';
-import AppConfig    from './types/AppConfig';
-import CommandFile  from './types/CommandFile';
-import EventFile    from './types/EventFile';
+import * as Discord                                        from 'discord.js';
+import * as fs                                             from 'fs';
+import * as _                                              from 'lodash';
+import readdirRecursive                                    from 'fs-readdir-recursive';
+import express, {Express, NextFunction, Request, Response} from 'express';
+import {header, validationResult}                          from 'express-validator';
+import {Sequelize}                                         from 'sequelize-typescript';
+import AppConfig                                           from './types/AppConfig';
+import CommandFile                                         from './types/CommandFile';
+import EventFile                                           from './types/EventFile';
+import EndpointFile                                        from './types/EndpointFile';
+
 
 // Wrap the entrypoint in a function that is automatically called so that we may exit early in case of an error.
 function main() : void
 {
-    const frr    = require('fs-readdir-recursive');
-    const client = new Discord.Client();
+    const apiKey : string = process.env.API_KEY;
+    const client          = new Discord.Client();
+    const api : Express   = express();
 
     let config : AppConfig = new AppConfig();
     _.extend(config, require('../config.json'));
@@ -44,8 +50,12 @@ function main() : void
         }
     }
 
+    /*
+     * Build a commands object which allows the message event handler to map command messages to the right command
+     * handler in the code.
+     */
     let commands : { [key : string] : CommandFile } = {};
-    _.each(frr('./commands/'), function (file : string) : void
+    _.each(readdirRecursive('./commands/'), function (file : string) : void
     {
         if (!file.endsWith('.js'))
         {
@@ -56,7 +66,8 @@ function main() : void
         commands[commandName]    = require('./commands/' + file);
     });
 
-    _.each(fs.readdirSync('./events/'), function (file : string)
+    // Register the event handlers from their files with the bot client.
+    _.each(fs.readdirSync('./events/'), function (file : string) : void
     {
         if (!file.endsWith('.js'))
         {
@@ -76,7 +87,45 @@ function main() : void
         delete require.cache[require.resolve('./events/' + file)];
     });
 
-    client.login(process.env.DISCORD_CLIENT_TOKEN).catch(console.error);
+    client.login(process.env.DISCORD_CLIENT_TOKEN)
+        .then(function ()
+        {
+            // Register the endpoints with Express after the bot client has managed to log in.
+            _.each(readdirRecursive('./endpoints/'), function (file : string) : void
+            {
+                let splitFile : Array<string> = file.split('/');
+                let httpMethod : string       = splitFile.shift();
+                if (!['get', 'post', 'patch', 'put', 'delete'].includes(httpMethod) || !file.endsWith('.js'))
+                {
+                    return;
+                }
+
+                let endpointPath : string       = '/' + splitFile.join('/');
+                endpointPath                    = endpointPath.substr(0, endpointPath.length - 3);
+                let endpointFile : EndpointFile = require('./endpoints/' + file);
+
+                api[httpMethod](
+                    endpointPath,
+                    header('dvb_key').equals(apiKey),
+                    function (rq : Request, rs : Response, n : NextFunction)
+                    {
+                        try
+                        {
+                            validationResult(rq).throw();
+                            n();
+                        }
+                        catch (e)
+                        {
+                            rs.sendStatus(403);
+                        }
+                    },
+                    endpointFile.run.bind(null, client, config, apiKey)
+                );
+            });
+
+            api.listen(8080);
+        })
+        .catch(console.error);
 }
 
 main();

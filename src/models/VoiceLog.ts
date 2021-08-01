@@ -25,7 +25,7 @@ export class VoiceLog extends Model
     /**
      * Row UID.
      */
-    public id : bigint;
+    declare public id : bigint;
     @AllowNull(false)
     @Column
     /**
@@ -62,6 +62,12 @@ export class VoiceLog extends Model
      * The moment when action took place.
      */
     public action_timestamp : Date;
+    @AllowNull(false)
+    @Column
+    /**
+     * Whether the log has been used to calculate a member's XP in the forums or not.
+     */
+    public processed : boolean;
 }
 
 export namespace VoiceLog

@@ -17,7 +17,7 @@ import {VoiceLog}              from '../models/VoiceLog';
 function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceChannel, config : AppConfig) : void
 {
     // Special case to check whether the joined channel was one to create temporary channels.
-    if (channel.id === config.tracked_guilds[user.guild.id].create_temporary_channel)
+    if ([config.tracked_guilds[user.guild.id].create_temporary_channel, config.tracked_guilds[user.guild.id].create_event_channel].includes(channel.id))
     {
         // Check that the user does not already own other channels.
         TemporaryVoiceChannel.findOne(
@@ -39,15 +39,18 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
                 else
                 {
                     let category : Discord.Snowflake;
-                    _.each(config.tracked_guilds[user.guild.id].temporary_channels_cats, function (tcc : Discord.Snowflake)
-                    {
-                        let checkingCat : Discord.GuildChannel = user.guild.channels.cache.get(tcc);
-                        if (checkingCat instanceof Discord.CategoryChannel && checkingCat.children.size < 50)
+                    _.each(
+                        config.tracked_guilds[user.guild.id].temporary_channels_cats.includes(channel.parent.id) ? config.tracked_guilds[user.guild.id].temporary_channels_cats : config.tracked_guilds[user.guild.id].event_channels_cats,
+                        function (tcc : Discord.Snowflake)
                         {
-                            category = checkingCat.id;
-                            return false;
+                            let checkingCat : Discord.GuildChannel = user.guild.channels.cache.get(tcc);
+                            if (checkingCat instanceof Discord.CategoryChannel && checkingCat.children.size < 50)
+                            {
+                                category = checkingCat.id;
+                                return false;
+                            }
                         }
-                    });
+                    );
 
                     // Check that there is an available category.
                     if (category !== undefined)
@@ -103,7 +106,8 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
             channel_id       : channel.id,
             vc_action        : VoiceLog.ACTIONS.JOIN,
             log_type         : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? VoiceLog.TYPES.EVENT : VoiceLog.TYPES.STANDARD,
-            action_timestamp : joinDate
+            action_timestamp : joinDate,
+            processed        : false
         }
     );
     vcl.save().catch(console.error);
@@ -111,7 +115,6 @@ function userJoinedChannel(user : Discord.GuildMember, channel : Discord.VoiceCh
 
 /**
  * Handles logic for when a user leaves a tracked channel.
- * TODO: Event channels.
  *
  * @param user
  * @param channel
@@ -160,7 +163,8 @@ function userLeftChannel(user : Discord.GuildMember, channel : Discord.VoiceChan
             channel_id       : channel.id,
             vc_action        : VoiceLog.ACTIONS.LEAVE,
             log_type         : config.tracked_guilds[user.guild.id].event_channels_cats.includes(channel.parent.id) ? VoiceLog.TYPES.EVENT : VoiceLog.TYPES.STANDARD,
-            action_timestamp : leaveDate
+            action_timestamp : leaveDate,
+            processed        : false
         }
     );
     vcl.save().catch(console.error);
