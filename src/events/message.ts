@@ -35,7 +35,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
         }
     });
 
-    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && checkCommandPermissions(message.guild.member(message.member), commandName, config))
+    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && checkCommandPermissions(message.member, commandName, config))
     {
         let cmdArgs : Array<string> = message.content
             .substr(config.prefix.length + commandName.length)
