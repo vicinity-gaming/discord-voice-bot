@@ -6,17 +6,16 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
  * Command which allows the owner of a temporary voice channel to deny connection to their channel to a certain member
  * or members.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -24,33 +23,33 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (!tvc.memberIsOwner(msg.member))
+            else if (!tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                this.message.reply('You do not own the voice channel.').catch(console.error);
                 return;
             }
 
             // Check that there are mentions in the message.
-            if (msg.mentions.members.size === 0)
+            if (this.message.mentions.members.size === 0)
             {
-                msg.reply('You did not tag anyone to deny.').catch(console.error);
+                this.message.reply('You did not tag anyone to deny.').catch(console.error);
                 return;
             }
 
             let perms : Array<Discord.OverwriteResolvable> = Array.from(vc.permissionOverwrites.values());
-            msg.mentions.members.each(function (m : Discord.GuildMember)
+            this.message.mentions.members.each(function (m : Discord.GuildMember)
             {
                 perms.push(
                     {
@@ -63,9 +62,9 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
             });
 
             vc.overwritePermissions(perms)
-                .then(function ()
+                .then(() =>
                 {
-                    msg.reply('The mentioned member(s) can no longer connect to your channel.').catch(console.error);
+                    this.message.reply('The mentioned member(s) can no longer connect to your channel.').catch(console.error);
                 })
                 .catch(console.error);
         });

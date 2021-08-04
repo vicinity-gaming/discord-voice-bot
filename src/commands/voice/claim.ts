@@ -6,17 +6,16 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
  * Command which transfers ownership of the channel to the invoker if the owner is no longer in the
  * voice channel.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -24,36 +23,36 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (tvc.memberIsOwner(msg.member))
+            else if (tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You already own the channel. What are you doing??').catch(console.error);
+                this.message.reply('You already own the channel. What are you doing??').catch(console.error);
                 return;
             }
             else if (Array.from(vc.members.keys()).includes(tvc.owner_id))
             {
-                msg.reply('You cannot claim a channel while the owner is still in the channel.').catch(console.error);
+                this.message.reply('You cannot claim a channel while the owner is still in the channel.').catch(console.error);
                 return;
             }
 
 
             // Checks passed, give channel ownership to the invoker.
-            tvc.owner_id = msg.member.id;
+            tvc.owner_id = this.message.member.id;
             tvc.save()
-                .then(function ()
+                .then(() =>
                 {
-                    msg.reply('You own the channel now. Use your newfound power wisely m\'lord.').catch(console.error);
+                    this.message.reply('You own the channel now. Use your newfound power wisely m\'lord.').catch(console.error);
                 })
                 .catch(console.error);
         });

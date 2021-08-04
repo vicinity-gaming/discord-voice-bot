@@ -1,36 +1,31 @@
 import * as Discord              from 'discord.js';
 import * as _                    from 'lodash';
 import CommandHelpData           from '../types/CommandHelpData';
-import CommandFile               from "../types/CommandFile";
+import CommandFile               from '../types/CommandFile';
 import {checkCommandPermissions} from '../utils/utils';
-import AppConfig                 from '../types/AppConfig';
 
 /**
  * Command to test the command argument parser.
  *
- * @param client
- * @param msg
- * @param cmdObj
- * @param config
- * @param commands
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message, cmdObj : { [key : string] : CommandFile }, config : AppConfig, ...commands : Array<string>) : Promise<void>
+export async function run() : Promise<void>
 {
     let reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
             title     : 'Commands Help',
             color     : [124, 139, 245],
             thumbnail : {
-                url : 'https://cdn.discordapp.com/avatars/' + msg.member.id + '/' + msg.member.user.avatar + '.png?size=1024'
+                url : 'https://cdn.discordapp.com/avatars/' + this.message.member.id + '/' + this.message.member.user.avatar + '.png?size=1024'
             }
         }
     );
     let i                            = 0;
-    _.each(cmdObj, function (cmdFile : CommandFile, k : string)
+    _.each(this.commands, (cmdFile : CommandFile, k : string) =>
     {
-        if ((commands[0] === '' || commands.includes(k)) && checkCommandPermissions(msg.member, k, config))
+        if ((this.arguments[0] === '' || this.arguments.includes(k)) && checkCommandPermissions(this.message.member, k, this.config))
         {
             if (i === 24)
             {
@@ -39,7 +34,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
                  * When this happens, the fields in the embed are reset, and the fields per embed counter is reset as
                  * well.
                  */
-                msg.reply(reply).catch(console.error);
+                this.message.reply(reply).catch(console.error);
                 reply.fields = [];
                 i            = 0;
             }
@@ -51,7 +46,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, cmdObj
             ++i;
         }
     });
-    msg.reply(reply).catch(console.error);
+    this.message.reply(reply).catch(console.error);
 }
 
 /**

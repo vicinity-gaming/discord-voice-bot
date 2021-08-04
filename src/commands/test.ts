@@ -5,16 +5,14 @@ import CommandHelpData from '../types/CommandHelpData';
 /**
  * Command to test the command argument parser.
  *
- * @param client
- * @param msg
- * @param args
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message, ...args : Array<string>) : Promise<void>
+export async function run() : Promise<void>
 {
     let argStore : Array<string> = [];
-    _.each(args, function (v : string, k : number)
+    _.each(this.arguments, function (v : string, k : number)
     {
         argStore.push(`Arg #${k}: ${v}`);
     });
@@ -25,7 +23,7 @@ export async function run(client : Discord.Client, msg : Discord.Message, ...arg
             description : _.join(argStore, '\n'),
         },
     );
-    msg.reply(reply).catch(console.error);
+    this.message.reply(reply).catch(console.error);
 }
 
 /**

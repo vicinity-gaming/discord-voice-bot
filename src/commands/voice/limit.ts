@@ -5,19 +5,17 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 /**
  * Limit the amount of people who can connect to the voice channel of the member running the command.
  *
- * @param client
- * @param msg
- * @param limit
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  * @author Jacob Marsengill
  */
-export async function run(client : Discord.Client, msg : Discord.Message, limit : string) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -25,34 +23,34 @@ export async function run(client : Discord.Client, msg : Discord.Message, limit 
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (!tvc.memberIsOwner(msg.member))
+            else if (!tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                this.message.reply('You do not own the voice channel.').catch(console.error);
                 return;
             }
 
-            if (limit === '' || Number.isNaN(Number(limit)))
+            if (this.arguments[0] === '' || Number.isNaN(Number(this.arguments[0])))
             {
-                msg.reply('You must specify a limit.').catch(console.error);
+                this.message.reply('You must specify a limit.').catch(console.error);
                 return;
             }
 
-            let iLimit : number = Number(limit);
+            let iLimit : number = Number(this.arguments[0]);
             if (iLimit > 99 || iLimit < 0)
             {
-                msg.reply('The limit must be a number between zero and ninety-nine.').catch(console.error);
+                this.message.reply('The limit must be a number between zero and ninety-nine.').catch(console.error);
                 return;
             }
 
@@ -61,9 +59,9 @@ export async function run(client : Discord.Client, msg : Discord.Message, limit 
                     userLimit : iLimit
                 }
             )
-                .then(function ()
+                .then(() =>
                 {
-                    msg.reply('Channel limit changed.').catch(console.error);
+                    this.message.reply('Channel limit changed.').catch(console.error);
                 })
                 .catch(console.error);
         });
