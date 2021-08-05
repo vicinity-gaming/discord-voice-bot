@@ -5,18 +5,17 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 /**
  * Limit the amount of people who can connect to the voice channel of the member running the command.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  * @author Jacob Marsengill
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -24,33 +23,33 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (!tvc.memberIsOwner(msg.member))
+            else if (!tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                this.message.reply('You do not own the voice channel.').catch(console.error);
                 return;
             }
 
             // Check that there are mentions in the message.
-            if (msg.mentions.members.size === 0)
+            if (this.message.mentions.members.size === 0)
             {
-                msg.reply('You did not mention anyone to kick.').catch(console.error);
+                this.message.reply('You did not mention anyone to kick.').catch(console.error);
                 return;
             }
 
             let kickedAnyone : boolean = false;
-            msg.mentions.members.each(function (m : Discord.GuildMember)
+            this.message.mentions.members.each((m : Discord.GuildMember) =>
             {
                 if (m.voice.channel?.id === vc.id)
                 {
@@ -61,11 +60,11 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
 
             if (kickedAnyone)
             {
-                msg.reply('The mentioned member(s) have been kicked from the channel.').catch(console.error);
+                this.message.reply('The mentioned member(s) have been kicked from the channel.').catch(console.error);
             }
             else
             {
-                msg.reply('The mentioned member(s) could not be kicked.').catch(console.error);
+                this.message.reply('The mentioned member(s) could not be kicked.').catch(console.error);
             }
         });
 }

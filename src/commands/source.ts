@@ -4,24 +4,23 @@ import CommandHelpData from '../types/CommandHelpData';
 /**
  * Display information about the bot's source code location.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
     const reply : Discord.MessageEmbed = new Discord.MessageEmbed(
         {
             title       : 'Source Code',
             color       : [124, 139, 245],
             thumbnail   : {
-                url : 'https://cdn.discordapp.com/avatars/' + client.user.id + '/' + client.user.avatar + '.png?size=1024'
+                url : 'https://cdn.discordapp.com/avatars/' + this.client.user.id + '/' + this.client.user.avatar + '.png?size=1024'
             },
             description : 'View the bot\'s source code on GitHub: https://github.com/vicinity-gaming/discord-voice-bot/tree/master'
         }
     );
-    msg.reply(reply).catch(console.error);
+    this.message.reply(reply).catch(console.error);
 }
 
 /**

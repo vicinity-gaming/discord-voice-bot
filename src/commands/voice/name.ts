@@ -6,18 +6,16 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
  * Renames the voice channel the member is in to what the member specifies given that the member is in a voice channel
  * that can be renamed and that they own the channel.
  *
- * @param client
- * @param msg
- * @param channelName
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message, channelName : string) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -25,30 +23,30 @@ export async function run(client : Discord.Client, msg : Discord.Message, channe
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (!tvc.memberIsOwner(msg.member))
+            else if (!tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                this.message.reply('You do not own the voice channel.').catch(console.error);
                 return;
             }
 
-            tvc.channel_name = channelName;
+            tvc.channel_name = this.arguments[0];
             tvc.save().catch(console.error);
-            vc.setName(channelName)
-                .then(function ()
+            vc.setName(this.arguments[0])
+                .then(() =>
                 {
-                    msg.reply('Name changed successfully.').catch(console.error);
+                    this.message.reply('Name changed successfully.').catch(console.error);
                 })
                 .catch(console.error);
         });
