@@ -3,6 +3,7 @@ import * as _                    from 'lodash';
 import AppConfig                 from '../types/AppConfig';
 import CommandFile               from '../types/CommandFile';
 import {checkCommandPermissions} from '../utils/utils';
+import CommandHandlerData        from '../types/CommandHandlerData';
 
 /**
  * Discord message event handler.
@@ -34,7 +35,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
         }
     });
 
-    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && checkCommandPermissions(message.guild.member(message.member), commandName, config))
+    if (isCommand && ['', message.channel.id].includes(config.tracked_guilds[message.guild.id].commands_channel) && checkCommandPermissions(message.member, commandName, config))
     {
         let cmdArgs : Array<string> = message.content
             .substr(config.prefix.length + commandName.length)
@@ -48,15 +49,15 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
             return _.replace(argWithoutDelimiters, /\\"/gm, '"');
         });
 
-        if (commandName === 'help')
-        {
-            // Define a special case for the help command as it needs to reference all other commands.
-            cmdObj['help'].run(client, message, cmdObj, config, ...cmdArgs).catch(console.error);
-        }
-        else
-        {
-            cmdObj[commandName].run(client, message, ...cmdArgs).catch(console.error);
-        }
+        let commandHandlerData : CommandHandlerData = {
+            client    : client,
+            message   : message,
+            commands  : cmdObj,
+            config    : config,
+            arguments : cmdArgs
+        };
+
+        cmdObj[commandName].run.call(commandHandlerData);
     }
     else
     {

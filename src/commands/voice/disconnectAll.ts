@@ -5,21 +5,20 @@ import CommandHelpData from '../../types/CommandHelpData';
  * Command which finds all members connected to voice channels and disconnects them from their channel. Useful to
  * perform maintenance on the voice bot.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
-    msg.guild.channels.cache.each(function (channel : Discord.GuildChannel)
+    this.message.guild.channels.cache.each(function (channel : Discord.GuildChannel)
     {
         if (!(channel instanceof Discord.VoiceChannel))
         {
             return;
         }
 
-        channel.members.each(function (member : Discord.GuildMember)
+        channel.members.each((member : Discord.GuildMember) =>
         {
             member.voice.kick();
         });

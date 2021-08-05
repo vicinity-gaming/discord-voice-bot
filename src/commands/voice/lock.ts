@@ -5,17 +5,16 @@ import {TemporaryVoiceChannel} from '../../models/TemporaryVoiceChannel';
 /**
  * Command to lock the channel the person is currently in assuming it's a temporary channel, and they own it.
  *
- * @param client
- * @param msg
+ * @this CommandHandlerData
  *
  * @author Carlos Amores
  */
-export async function run(client : Discord.Client, msg : Discord.Message) : Promise<void>
+export async function run() : Promise<void>
 {
-    let vc : Discord.VoiceChannel | null = msg.member.voice.channel;
+    let vc : Discord.VoiceChannel | null = this.message.member.voice.channel;
     if (vc === null)
     {
-        msg.reply('You are not in a voice channel.').catch(console.error);
+        this.message.reply('You are not in a voice channel.').catch(console.error);
         return;
     }
 
@@ -23,39 +22,39 @@ export async function run(client : Discord.Client, msg : Discord.Message) : Prom
         {
             where : {
                 channel_id : vc.id,
-                guild_id   : msg.guild.id,
+                guild_id   : this.message.guild.id,
                 alive      : true
             }
         }
     )
-        .then(function (tvc : TemporaryVoiceChannel | null)
+        .then((tvc : TemporaryVoiceChannel | null) =>
         {
             if (tvc === null)
             {
-                msg.reply('You are not in a temporary voice channel.').catch(console.error);
+                this.message.reply('You are not in a temporary voice channel.').catch(console.error);
                 return;
             }
-            else if (!tvc.memberIsOwner(msg.member))
+            else if (!tvc.memberIsOwner(this.message.member))
             {
-                msg.reply('You do not own the voice channel.').catch(console.error);
+                this.message.reply('You do not own the voice channel.').catch(console.error);
                 return;
             }
 
             vc.overwritePermissions(
                 [
                     {
-                        id   : msg.guild.roles.everyone.id,
+                        id   : this.message.guild.roles.everyone.id,
                         deny : 'CONNECT'
                     },
                     {
-                        id    : msg.member.id,
+                        id    : this.message.member.id,
                         allow : 'CONNECT'
                     }
                 ]
             )
-                .then(function ()
+                .then(() =>
                 {
-                    msg.reply('Voice channel locked! :lock:').catch(console.error);
+                    this.message.reply('Voice channel locked! :lock:').catch(console.error);
                 })
                 .catch(console.error);
         });
