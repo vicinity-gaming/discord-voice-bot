@@ -57,7 +57,7 @@ export async function handleEvent(client : Discord.Client, config : AppConfig, c
             arguments : cmdArgs
         };
 
-        cmdObj[commandName].run.call(commandHandlerData);
+        cmdObj[commandName].run.call(commandHandlerData).catch(console.error);
     }
     else
     {
