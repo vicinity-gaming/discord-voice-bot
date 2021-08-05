@@ -29,7 +29,7 @@ export async function run() : Promise<void>
         return;
     }
 
-    // Check that the member does not already own a voice channel.
+    // Check that the member running the command is the owner of the voice channel.
     TemporaryVoiceChannel.findOne(
         {
             where : {
@@ -41,9 +41,9 @@ export async function run() : Promise<void>
     )
         .then((tvc : TemporaryVoiceChannel | null) =>
         {
-            if (tvc !== null)
+            if (tvc === null)
             {
-                this.message.reply('You already own a voice channel.').catch(console.error);
+                this.message.reply('You do not own the channel.').catch(console.error);
                 return;
             }
 
@@ -95,7 +95,19 @@ export async function run() : Promise<void>
                         }
                     );
                     tvcRecord.save().catch(console.error);
-                    this.message.member.voice.setChannel(vc).catch(console.error);
+                    this.message.reply('A sub-channel has been created. It will be automatically deleted in 30 seconds if it is empty.').catch(console.error);
+                    setTimeout(
+                        () =>
+                        {
+                            if (vc.members.size === 0 && this.message.guild.channels.cache.get(vc.id))
+                            {
+                                vc.delete();
+                                tvcRecord.alive = false;
+                                tvcRecord.save().catch(console.error);
+                            }
+                        },
+                        30000
+                    );
                 })
                 .catch(console.error);
         });
@@ -111,6 +123,6 @@ export function help() : CommandHelpData
     return {
         commandName        : 'Voice Sub-channel',
         commandDescription : 'Create a sub-channel from a temporary event voice channel',
-        commandUsage       : '.voice.subchannel [NAME]'
+        commandUsage : '.voice.subchannel ["NAME"]'
     };
 }

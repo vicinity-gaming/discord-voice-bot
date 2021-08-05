@@ -63,7 +63,7 @@ export function help() : CommandHelpData
 {
     return {
         commandName        : 'Voice Unlock',
-        commandDescription : 'Unlocks the channel and allows everyone to join',
+        commandDescription : 'Unlocks the channel and allows anyone to join',
         commandUsage       : '.voice.unlock'
     };
 }
