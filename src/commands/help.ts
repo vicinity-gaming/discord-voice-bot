@@ -58,7 +58,7 @@ export function help() : CommandHelpData
 {
     return {
         commandName        : 'Help',
-        commandDescription : 'Displays information about all commands or specific commands.',
+        commandDescription : 'Displays information about all commands or specific commands',
         commandUsage       : '.help [COMMAND1 COMMAND2 ...]'
     }
 }
